@@ -15,6 +15,10 @@ export const login = async (req: Request, res: Response) => {
     if (!user)
       return res.status(400).json({ msg: 'Usuario o contraseña incorrecto' });
 
+    // Validar si la cuenta esta verificada
+    if (!user.confirm)
+      return res.json({ msg: 'El usuario no esta verificado' });
+
     // Verificar si esta activo
     if (!user.state) return res.json({ msg: 'El usuario no esta activo' });
 

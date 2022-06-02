@@ -9,6 +9,10 @@ type Config = {
   googleSectret: string;
   stripeSecretKey: string;
   clientURL: string;
+  emailHost: string;
+  emailPort: string;
+  emailUser: string;
+  emailPass: string;
 };
 
 export const config: Config = {
@@ -22,4 +26,8 @@ export const config: Config = {
   googleSectret: process.env.GOOGLE_SECRET_ID!,
   stripeSecretKey: process.env.STRIPE_SECRET_KEY!,
   clientURL: process.env.CLIENT_URL!,
+  emailHost: process.env.EMAIL_HOST!,
+  emailPort: process.env.EMAIL_PORT!,
+  emailUser: process.env.EMAIL_USER!,
+  emailPass: process.env.EMAIL_PASS!,
 };

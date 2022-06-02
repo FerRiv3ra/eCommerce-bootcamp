@@ -2,11 +2,15 @@ import { Router } from 'express';
 
 import { check } from 'express-validator';
 import {
+  confirmToken,
+  confirmUser,
   createUser,
   deleteUser,
   editUser,
+  forgotPassword,
   getUser,
   getUsers,
+  newPassword,
 } from '../controllers/users';
 import { validEmail, validRole, validUserById } from '../helpers/dbValidations';
 import { validarCampos } from '../middlewares/validar-campos';
@@ -19,6 +23,26 @@ const router: Router = Router();
 router.get('/', getUsers);
 
 router.get('/:id', getUser);
+
+router.get('/confirm/:token', confirmUser);
+
+router
+  .route('/forgot-password/:token')
+  .get(confirmToken)
+  .post(
+    [
+      check(
+        'password',
+        'La contraseña dede tener al menos 8 caracteres'
+      ).isLength({ min: 8 }),
+      check(
+        'password',
+        'La contraseña dede tener al menos una minúscula, una mayúscula, un número y un caracter especial'
+      ).isStrongPassword(),
+      validarCampos,
+    ],
+    newPassword
+  );
 
 router.post(
   '/',
@@ -38,6 +62,12 @@ router.post(
     validarCampos,
   ],
   createUser
+);
+
+router.post(
+  '/forgot-password',
+  [check('email', 'Correo no válido').isEmail(), validarCampos],
+  forgotPassword
 );
 
 router.put(

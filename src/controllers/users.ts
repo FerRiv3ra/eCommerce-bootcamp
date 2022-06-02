@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import bcrypt from 'bcrypt';
 import User from '../models/User';
+import generateToken from '../helpers/generateToken';
 
 const getUsers = async (req: Request, res: Response) => {
   const start = req.query.start || 0;
@@ -74,4 +75,93 @@ const deleteUser = async (req: Request, res: Response) => {
   });
 };
 
-export { getUsers, getUser, createUser, editUser, deleteUser };
+const confirmUser = async (req: Request, res: Response) => {
+  const token: string = req.params.token;
+
+  try {
+    const user = await User.findOne({ token });
+
+    if (!user) {
+      return res.status(400).json({ msg: 'Invalid token' });
+    }
+
+    user.confirm = true;
+    user.token = '';
+
+    await user.save();
+
+    res.json({ msg: 'Success, user confirmed' });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const forgotPassword = async (req: Request, res: Response) => {
+  const email: string = req.body.email;
+
+  try {
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(400).json({ msg: 'Email no registered' });
+    }
+
+    user.token = generateToken();
+    await user.save();
+
+    res.json({ msg: 'Email with instructions sent' });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const confirmToken = async (req: Request, res: Response) => {
+  const token: string = req.params.token;
+
+  try {
+    const user = await User.findOne({ token });
+
+    if (!user) {
+      return res.status(400).json({ msg: 'Invalid token' });
+    }
+
+    res.json({ msg: 'Success, valid token' });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const newPassword = async (req: Request, res: Response) => {
+  const password: string = req.body.password;
+  const token: string = req.params.token;
+
+  try {
+    const user = await User.findOne({ token });
+
+    if (!user) {
+      return res.status(400).json({ msg: 'Invalid token' });
+    }
+
+    const salt = bcrypt.genSaltSync();
+    user.password = bcrypt.hashSync(password, salt);
+    user.token = '';
+
+    await user.save();
+
+    res.json({ msg: 'Success, password changed' });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export {
+  getUsers,
+  getUser,
+  createUser,
+  editUser,
+  deleteUser,
+  confirmUser,
+  forgotPassword,
+  confirmToken,
+  newPassword,
+};
