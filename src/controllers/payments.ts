@@ -28,23 +28,34 @@ const checkout = async (req: Request, res: Response) => {
       mode: 'payment',
       line_items: req.body.items.map((item: any) => {
         const storeItem = storeItems.get(item.id);
-        return {
-          price_data: {
-            currency: 'usd',
-            product_data: {
-              name: storeItem?.name,
+        const producto = products.filter((product) => product.id === item.id);
+        if (producto[0].stock >= item.quantity) {
+          return {
+            price_data: {
+              currency: 'usd',
+              product_data: {
+                name: storeItem?.name,
+              },
+              unit_amount: storeItem?.priceInCents,
             },
-            unit_amount: storeItem?.priceInCents,
-          },
-          quantity: item.quantity,
-        };
+            quantity: item.quantity,
+          };
+        } else {
+          throw new Error(
+            `The quantity in ${storeItem?.name} cannot be greater than the stock`
+          );
+        }
       }),
       success_url: `${config.clientURL}/success.html`,
       cancel_url: `${config.clientURL}/cancel.html`,
     });
     res.json({ url: session.url });
   } catch (error) {
-    res.status(500).json({ error });
+    if (error instanceof Error) {
+      res.status(400).json({ error: error.message });
+    } else {
+      res.status(400).json({ error });
+    }
   }
 };
 

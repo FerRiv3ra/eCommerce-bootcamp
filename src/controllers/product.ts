@@ -80,6 +80,7 @@ const createProduct = async (req: Request, res: Response) => {
   const name: string = req.body.name;
   const brand: string = req.body.brand;
   const price: number = req.body.price;
+  const stock: number = req.body.stock;
   const category: string = req.body.category;
   const description: string = req.body.description || '';
 
@@ -89,6 +90,7 @@ const createProduct = async (req: Request, res: Response) => {
     price,
     brand: brand.toUpperCase(),
     category,
+    stock,
     description,
   });
 
@@ -102,6 +104,7 @@ const editProduct = async (req: Request, res: Response) => {
   const name: string = req.body.name;
   const brand: string = req.body.brand;
   const price: number = req.body.price;
+  const stock: number = req.body.stock;
   const category: string = req.body.category;
   const description: string = req.body.description;
 
@@ -111,6 +114,7 @@ const editProduct = async (req: Request, res: Response) => {
       name: name.toUpperCase(),
       price,
       category,
+      stock,
       description,
       brand: brand.toUpperCase(),
     },

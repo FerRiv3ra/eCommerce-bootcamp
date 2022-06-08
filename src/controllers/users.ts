@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import bcrypt from 'bcrypt';
 import User from '../models/User';
 import generateToken from '../helpers/generateToken';
+import { sendEmail } from '../helpers/send-email';
 
 const getUsers = async (req: Request, res: Response) => {
   const start = req.query.start || 0;
@@ -37,7 +38,18 @@ const createUser = async (req: Request, res: Response) => {
   user.password = bcrypt.hashSync(password, salt);
 
   await user.save();
-  res.status(201).json(user);
+
+  const sent = await sendEmail(email, 'confirm', name, user.token);
+
+  if (sent) {
+    return res.status(201).json({
+      msg: 'We have sent an email with the instructions to verify your account',
+    });
+  } else {
+    return res.status(500).json({
+      msg: 'email no enviado, hable con el administrador',
+    });
+  }
 };
 
 const editUser = async (req: Request, res: Response) => {
@@ -106,10 +118,25 @@ const forgotPassword = async (req: Request, res: Response) => {
       return res.status(400).json({ msg: 'Email no registered' });
     }
 
-    user.token = generateToken();
+    const token = generateToken();
+    user.token = token;
     await user.save();
 
-    res.json({ msg: 'Email with instructions sent' });
+    const sent = await sendEmail(
+      email,
+      'forgot-password',
+      user.name,
+      token,
+      false
+    );
+
+    if (sent) {
+      return res.json({ msg: 'We have sent an email with the instructions' });
+    } else {
+      return res.status(500).json({
+        msg: 'email no enviado, hable con el administrador',
+      });
+    }
   } catch (error) {
     console.log(error);
   }

@@ -13,6 +13,7 @@ type Config = {
   emailPort: string;
   emailUser: string;
   emailPass: string;
+  frontUrl: string;
 };
 
 export const config: Config = {
@@ -30,4 +31,5 @@ export const config: Config = {
   emailPort: process.env.EMAIL_PORT!,
   emailUser: process.env.EMAIL_USER!,
   emailPass: process.env.EMAIL_PASS!,
+  frontUrl: process.env.FRONT_URL!,
 };
