@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import Stripe from 'stripe';
 import { config } from '../config/envConfig';
 import Producto from '../models/Producto';
+import User from '../models/User';
 
 const stripe = new Stripe(config.stripeSecretKey, {
   apiVersion: '2020-08-27',
@@ -10,6 +11,7 @@ const stripe = new Stripe(config.stripeSecretKey, {
 const checkout = async (req: Request, res: Response) => {
   try {
     const products = await Producto.find();
+
     const storeItems = new Map(
       products.map((product) => {
         return [
@@ -46,7 +48,7 @@ const checkout = async (req: Request, res: Response) => {
           );
         }
       }),
-      success_url: `${config.clientURL}/success.html`,
+      success_url: `${config.frontUrl}/checkout/success/${req.uid}`,
       cancel_url: `${config.clientURL}/cancel.html`,
     });
     res.json({ url: session.url });
@@ -59,4 +61,32 @@ const checkout = async (req: Request, res: Response) => {
   }
 };
 
-export { checkout };
+const confirmPay = async (req: Request, res: Response) => {
+  const id = req.params.id;
+  const uid = req.uid;
+
+  if (uid !== id) {
+    return res.status(403).json({
+      msg: 'You can confirm just your payment',
+    });
+  }
+
+  try {
+    const user = await User.findById(uid);
+
+    const { purchased_items, shopping_cart } = user;
+
+    user.shopping_cart = [];
+    user.purchased_items = [...purchased_items, ...shopping_cart];
+
+    user.save();
+
+    res.json({
+      msg: 'Payment confirm',
+    });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export { checkout, confirmPay };

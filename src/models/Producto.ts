@@ -17,7 +17,7 @@ const ProductoSchema = new Schema({
   description: {
     type: String,
   },
-  img: { type: String },
+  img: { type: String, default: '' },
   name: {
     type: String,
     required: true,

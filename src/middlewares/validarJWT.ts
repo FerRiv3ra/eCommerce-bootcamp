@@ -9,9 +9,12 @@ export const validateJWT = async (
   next: NextFunction
 ) => {
   let token;
-  if (req.cookies.token) {
+  if (
+    req.headers.authorization &&
+    req.headers.authorization.startsWith('Bearer')
+  ) {
     try {
-      token = req.cookies.token;
+      token = req.headers.authorization.split(' ')[1];
 
       const jwtPayload: JwtPayload | string = jwt.verify(
         token,

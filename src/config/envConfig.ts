@@ -14,6 +14,7 @@ type Config = {
   emailUser: string;
   emailPass: string;
   frontUrl: string;
+  cloudinaryUrl: string;
 };
 
 export const config: Config = {
@@ -32,4 +33,5 @@ export const config: Config = {
   emailUser: process.env.EMAIL_USER!,
   emailPass: process.env.EMAIL_PASS!,
   frontUrl: process.env.FRONT_URL!,
+  cloudinaryUrl: process.env.CLOUDINARY_URL!,
 };

@@ -5,8 +5,11 @@ import User from '../models/User';
 
 export const validRole = async (role: string) => {
   // Validar que se ingrese un rol válido
-  const existRole = await Role.findOne({ role });
-  if (!existRole) throw new Error(`El rol ${role} no esta registrado en la DB`);
+  if (role) {
+    const existRole = await Role.findOne({ role });
+    if (!existRole)
+      throw new Error(`El rol ${role} no esta registrado en la DB`);
+  }
 };
 
 export const validEmail = async (email: string) => {
@@ -59,6 +62,14 @@ export const permitCategory = (
 ): boolean => {
   if (!colections.includes(colection)) {
     throw new Error(`La colección ${colection} no es permitida, ${colections}`);
+  }
+
+  return true;
+};
+
+export const validColection = (collection: string, collections: string[]) => {
+  if (!collections.includes(collection)) {
+    throw new Error(`${collection} is not valid`);
   }
 
   return true;

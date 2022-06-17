@@ -30,7 +30,17 @@ export const login = async (req: Request, res: Response) => {
     // Generar JWT
     const token = await generarJWT(user._id);
 
-    res.status(201).cookie('token', token, cookieConfig).json(user);
+    res.status(201).json({
+      token,
+      user: {
+        email: user.email,
+        name: user.name,
+        role: user.role,
+        img: user.img,
+        shopping_cart: user.shopping_cart,
+        uid: user._id,
+      },
+    });
   } catch (error) {
     console.log(error);
     res.status(500).json({
@@ -77,7 +87,17 @@ export const googleSignIn = async (req: Request, res: Response) => {
     // Generar JWT
     const token = await generarJWT(user._id);
 
-    res.cookie('token', token, cookieConfig).json(user);
+    res.status(201).json({
+      token,
+      user: {
+        email: user.email,
+        name: user.name,
+        role: user.role,
+        img: user.img,
+        shopping_cart: user.shopping_cart,
+        uid: user._id,
+      },
+    });
   } catch (err) {
     res.status(400).json({
       msg: 'Token de Google no válido',
@@ -90,5 +110,14 @@ export const tokenLogin = async (req: Request, res: Response) => {
 
   const user = await User.findById(uid);
 
-  res.json(user);
+  res.json({
+    user: {
+      email: user.email,
+      name: user.name,
+      role: user.role,
+      img: user.img,
+      shopping_cart: user.shopping_cart,
+      uid: user._id,
+    },
+  });
 };

@@ -42,6 +42,10 @@ const userSchema = new Schema({
     type: Array,
     default: [],
   },
+  purchased_items: {
+    type: Array,
+    default: [],
+  },
   token: {
     type: String,
     default: generateToken(),

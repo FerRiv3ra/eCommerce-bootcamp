@@ -6,7 +6,8 @@ interface User {
   name: string;
   role: string;
   state: boolean;
-  shopping_cart?: string[];
+  shopping_cart?: object[];
+  purchased_items?: object[];
   token?: string;
 }
 
@@ -15,5 +16,6 @@ declare namespace Express {
     authUser?: User;
     uid?: string;
     files?: Any;
+    token?: string;
   }
 }

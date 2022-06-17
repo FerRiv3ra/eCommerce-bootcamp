@@ -57,8 +57,6 @@ const getProducts = async (req: Request, res: Response) => {
     query.price = { ...query.price, $lte: Number(priceTo) };
   }
 
-  console.log(query);
-
   const [total, products] = await Promise.all([
     Producto.countDocuments(query).skip(Number(start)),
     Producto.find(query)
@@ -107,10 +105,12 @@ const editProduct = async (req: Request, res: Response) => {
   const stock: number = req.body.stock;
   const category: string = req.body.category;
   const description: string = req.body.description;
+  const avalible: boolean = req.body.avalible;
 
   const product = await Producto.findByIdAndUpdate(
     id,
     {
+      avalible,
       name: name.toUpperCase(),
       price,
       category,
@@ -119,7 +119,9 @@ const editProduct = async (req: Request, res: Response) => {
       brand: brand.toUpperCase(),
     },
     { returnOriginal: false }
-  );
+  )
+    .populate({ path: 'user', select: 'name' })
+    .populate({ path: 'category', select: 'name' });
 
   res.json(product);
 };

@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import morgan from 'morgan';
 import cookie from 'cookie-parser';
+import fileUpload from 'express-fileupload';
 import { connection } from '../config/dbConfig';
 import { config } from '../config/envConfig';
 import {
@@ -10,6 +11,7 @@ import {
   categoryRoute,
   productRoute,
   checkoutRoute,
+  uploadRoute,
 } from '../routes';
 
 class Server {
@@ -20,6 +22,7 @@ class Server {
     categories: string;
     products: string;
     checkout: string;
+    upload: string;
   };
   constructor() {
     this.app = express();
@@ -30,6 +33,7 @@ class Server {
       categories: '/api/categories',
       products: '/api/products',
       checkout: '/api/checkout',
+      upload: '/api/upload',
     };
 
     this.dbConnection();
@@ -53,6 +57,14 @@ class Server {
     this.app.use(morgan('dev'));
 
     this.app.use(cookie());
+
+    this.app.use(
+      fileUpload({
+        useTempFiles: true,
+        tempFileDir: '/tmp/',
+        createParentPath: true,
+      })
+    );
   }
 
   private routes() {
@@ -61,6 +73,7 @@ class Server {
     this.app.use(this.paths.categories, categoryRoute);
     this.app.use(this.paths.products, productRoute);
     this.app.use(this.paths.checkout, checkoutRoute);
+    this.app.use(this.paths.upload, uploadRoute);
   }
 
   public listen() {

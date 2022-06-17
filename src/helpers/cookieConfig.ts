@@ -5,7 +5,7 @@ expires.setDate(expires.getDate() + 7);
 
 export const cookieConfig: CookieOptions = {
   httpOnly: true,
-  secure: false,
+  secure: true,
   sameSite: 'none',
   expires,
 };

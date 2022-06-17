@@ -65,10 +65,7 @@ const editUser = async (req: Request, res: Response) => {
     returnOriginal: false,
   }).select('-password');
 
-  res.json({
-    ok: true,
-    user,
-  });
+  res.json(user);
 };
 
 const deleteUser = async (req: Request, res: Response) => {
