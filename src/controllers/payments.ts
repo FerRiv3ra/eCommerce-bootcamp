@@ -48,8 +48,8 @@ const checkout = async (req: Request, res: Response) => {
           );
         }
       }),
-      success_url: `${config.frontUrl}/checkout/success/${req.uid}`,
-      cancel_url: `${config.clientURL}/cancel.html`,
+      success_url: `${config.frontUrl}/store/checkout/success/${req.uid}`,
+      cancel_url: `${config.clientURL}/store/shoping-cart`,
     });
     res.json({ url: session.url });
   } catch (error) {
