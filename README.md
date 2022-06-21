@@ -46,9 +46,13 @@ Fill with your front url
 
 > **FRONT_URL**= Use your frontend url, for example "_localhost:3000_"
 
-## Execute developer server
+### Execute developer server
 
-> nodemon
+> npm start
+
+### Create production build
+
+> npm run build
 
 ## Docs in Postman
 
