@@ -49,7 +49,7 @@ const checkout = async (req: Request, res: Response) => {
         }
       }),
       success_url: `${config.frontUrl}/store/checkout/success/${req.uid}`,
-      cancel_url: `${config.clientURL}/store/shoping-cart`,
+      cancel_url: `${config.frontUrl}/store/shopping-cart`,
     });
     res.json({ url: session.url });
   } catch (error) {
@@ -65,6 +65,12 @@ const confirmPay = async (req: Request, res: Response) => {
   const id = req.params.id;
   const uid = req.uid;
 
+  interface Prod {
+    id: string;
+    quantity: number;
+    price: number;
+  }
+
   if (uid !== id) {
     return res.status(403).json({
       msg: 'You can confirm just your payment',
@@ -76,10 +82,30 @@ const confirmPay = async (req: Request, res: Response) => {
 
     const { purchased_items, shopping_cart } = user;
 
+    if (!shopping_cart.length) {
+      return res.status(400).json({
+        msg: 'Invalid token',
+      });
+    }
+
+    shopping_cart.forEach(async (item: Prod) => {
+      const product = await Producto.findById(item.id);
+
+      product.stock = product.stock - item.quantity;
+
+      if (product.stock === 0) {
+        product.avalible = false;
+      }
+
+      console.log(product);
+
+      await product.save();
+    });
+
     user.shopping_cart = [];
     user.purchased_items = [...purchased_items, ...shopping_cart];
 
-    user.save();
+    await user.save();
 
     res.json({
       msg: 'Payment confirm',

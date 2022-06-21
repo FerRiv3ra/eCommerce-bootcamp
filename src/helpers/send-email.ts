@@ -53,7 +53,7 @@ export const sendEmail = async (
     color: white;
     display: block;
     font-size: large;
-  ">eCommerce FerRivera © ${new Date().getFullYear()}</a>
+  ">ElectroStore © ${new Date().getFullYear()}</a>
     </div>
   </div>
 </body>
@@ -70,7 +70,7 @@ export const sendEmail = async (
 
   try {
     await transport.sendMail({
-      from: '"No-Reply eCommerce FerRivera" <no-reply@ecommerce.com>',
+      from: '"No-Reply ElectroStore" <no-reply@ecommerce.com>',
       to,
       subject,
       html: emailHTML,
